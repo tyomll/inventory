@@ -9,9 +9,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  
-  await app.listen(3000, () => {
-    console.log("Server started listening on port 3000");
-  });
+  await app.listen(80, "0.0.0.0");
 }
 bootstrap();
