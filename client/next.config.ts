@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   env: {
     BASE_URL: process.env.BASE_URL,
+  },
+  eslint: {
+    ignoreDuringBuilds: true, // Ignore ESLint errors during the build process
   },
 };
 

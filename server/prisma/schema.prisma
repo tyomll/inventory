@@ -12,3 +12,13 @@ model User {
   email    String @unique
   password String
 }
+
+model Product {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  sku         String @unique @db.VarChar(255)
+  category    String @db.VarChar(255)
+  description String @db.Text
+  price       Int    @default(0) 
+  stock       Int    @default(0)
+}

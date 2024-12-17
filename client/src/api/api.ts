@@ -1,6 +1,9 @@
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import endpoints from "./endpoints";
+import { Product } from "@/types/entities.types";
+import { Query } from "./types";
+import { formatQueryString } from "./utils";
 
 const api = axios.create({
   baseURL: process.env.BASE_URL,
@@ -27,4 +30,12 @@ export const login = (email: string, password: string) => {
 
 export const register = (email: string, password: string) => {
   return api.post(endpoints.auth.register, { email, password });
+};
+
+export const getProducts = (query: Query = {}) => {
+  return api.get(endpoints.products.list + formatQueryString(query));
+};
+
+export const createProduct = (product: Partial<Product>) => {
+  return api.post(endpoints.products.create, product);
 };

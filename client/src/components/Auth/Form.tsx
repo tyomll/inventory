@@ -55,8 +55,6 @@ const AuthForm = ({ form }: Props) => {
       if (isLoginForm) {
         const response = await login(email, password);
         const { token, expiresIn } = response.data;
-        console.log("expiresIn :", expiresIn);
-        console.log("token :", token);
 
         await setCookie("token", token, {
           maxAge: expiresIn,
@@ -68,7 +66,7 @@ const AuthForm = ({ form }: Props) => {
           description: "You have successfully logged in.",
           variant: "default",
         });
-        // router.push("/dashboard");
+        router.push("/dashboard");
       } else {
         await register(email, password);
         toast({
