@@ -24,11 +24,32 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { createProduct } from "@/api/api";
+import { createProduct, deleteProduct, editProduct } from "@/api/api";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import { Product as ProductType } from "@/types/entities.types";
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
+
+interface Props {
+  product?: ProductType;
+}
+
+type Action = "create" | "edit" | "view";
 
 const formSchema = z.object({
+  id: z.coerce.number(),
   name: z.string().min(2, {
     message: "Product name must be at least 2 characters.",
   }),
@@ -62,27 +83,34 @@ const handleError = (error: AxiosError) => {
   }
 };
 
-const CreateProduct = () => {
+const Product = ({ product }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      sku: "",
-      category: "",
-      description: "",
-      price: 0,
-      stock: 0,
-    },
+    defaultValues: product
+      ? product
+      : {
+          id: 0,
+          name: "",
+          sku: "",
+          category: "",
+          description: "",
+          price: 0,
+          stock: 0,
+        },
   });
   const { toast } = useToast();
   const router = useRouter();
+  const [action, setAction] = useState<Action>(product ? "view" : "create");
+  const isDisabled = action === "view";
 
   const onSubmit = async (product: z.infer<typeof formSchema>) => {
+    const fn = action === "create" ? createProduct : editProduct;
+
     try {
-      await createProduct(product);
+      await fn(product);
       toast({
-        title: "Product created",
-        description: "Your new product has been created successfully.",
+        title: action === "create" ? "Product created" : "Product updated",
+        description: `Your new product has been ${action === "create" ? "created" : "updated"} successfully.`,
       });
 
       router.push("/dashboard/products");
@@ -95,12 +123,68 @@ const CreateProduct = () => {
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Create New Product</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold mb-6">
+          {action === "create"
+            ? "Create New Product"
+            : action === "view"
+              ? `Product - ${product?.name}`
+              : "Edit Product"}
+        </h1>
+        <div className="flex items-center space-x-4">
+          {product && (
+            <Button
+              onClick={() => {
+                setAction(action === "view" ? "edit" : "view");
+                form.reset();
+              }}
+            >
+              {action === "view" ? "Edit Product" : "Reset changes"}
+            </Button>
+          )}
+          {product && (action === "edit" || action === "view") && (
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Button variant="destructive">
+                  <Trash2 />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the product and remove the data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      deleteProduct(product.id);
+
+                      toast({
+                        title: "Product deleted",
+                        description:
+                          "Your product has been deleted successfully.",
+                      });
+                      router.push("/dashboard/products");
+                    }}
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="name"
+            disabled={isDisabled}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Product Name</FormLabel>
@@ -117,6 +201,7 @@ const CreateProduct = () => {
           <FormField
             control={form.control}
             name="sku"
+            disabled={isDisabled}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>SKU</FormLabel>
@@ -133,12 +218,14 @@ const CreateProduct = () => {
           <FormField
             control={form.control}
             name="category"
+            disabled={isDisabled}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  disabled={isDisabled}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -163,6 +250,7 @@ const CreateProduct = () => {
           <FormField
             control={form.control}
             name="description"
+            disabled={isDisabled}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
@@ -183,6 +271,7 @@ const CreateProduct = () => {
           <FormField
             control={form.control}
             name="price"
+            disabled={isDisabled}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Price</FormLabel>
@@ -204,6 +293,7 @@ const CreateProduct = () => {
           <FormField
             control={form.control}
             name="stock"
+            disabled={isDisabled}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Initial Stock</FormLabel>
@@ -224,11 +314,15 @@ const CreateProduct = () => {
               </p>
             )}
           </FormMessage>
-          <Button type="submit">Create Product</Button>
+          {action !== "view" && (
+            <Button type="submit" disabled={isDisabled}>
+              {action === "create" ? "Create" : "Update"} Product
+            </Button>
+          )}
         </form>
       </Form>
     </div>
   );
 };
 
-export default CreateProduct;
+export default Product;

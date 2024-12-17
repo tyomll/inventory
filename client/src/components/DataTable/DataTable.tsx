@@ -30,6 +30,9 @@ import { DataTableToolbar } from "./DataTableToolbar";
 import { AxiosPromise } from "axios";
 import { useTableStore } from "@/providers/TableStoreProvider";
 import { DataTableFilter } from "@/types/dataTable.types";
+import { exportExcel } from "@/utils/table";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -109,12 +112,16 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const handleExport = () => {
+    exportExcel(table.getFilteredRowModel().rows);
+  };
+
   React.useEffect(() => {
     setTableData(data || []);
   }, [data]);
 
   return (
-    <div className="mt-4 space-y-4">
+    <div className="flex flex-col mt-4 space-y-4">
       <DataTableToolbar
         table={table}
         filters={filters}
@@ -124,6 +131,10 @@ export function DataTable<TData, TValue>({
         deleteFunc={deleteFunc}
         deletionRowName={deletionRowName}
       />
+      <Button onClick={handleExport} className="self-end">
+        <Download />
+        Export CSV
+      </Button>
       <div className="space-y-4 overflow-y-auto rounded-xl bg-sidebar border border-sidebar-border p-5">
         <p className="text-h4 text-black-100">{tableName}</p>
         <Table>

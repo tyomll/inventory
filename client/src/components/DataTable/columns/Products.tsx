@@ -2,6 +2,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../DataTableColumnHeader";
 import { Products } from "../schema";
 import { truncate } from "lodash";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
 export const productsColumns: ColumnDef<Products, unknown>[] = [
   {
@@ -85,5 +87,13 @@ export const productsColumns: ColumnDef<Products, unknown>[] = [
         </div>
       );
     },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => (
+      <Link href={`/dashboard/products/${row.getValue("id")}`}>
+        <ExternalLink width={16} height={16} />
+      </Link>
+    ),
   },
 ];

@@ -6,6 +6,8 @@ const endpoints = {
   products: {
     list: "/products",
     create: "/products",
+    edit: "/products",
+    delete: "/products",
   },
 };
 

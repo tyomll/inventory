@@ -4,6 +4,7 @@ import endpoints from "./endpoints";
 import { Product } from "@/types/entities.types";
 import { Query } from "./types";
 import { formatQueryString } from "./utils";
+import { omit } from "lodash";
 
 const api = axios.create({
   baseURL: process.env.BASE_URL,
@@ -37,5 +38,13 @@ export const getProducts = (query: Query = {}) => {
 };
 
 export const createProduct = (product: Partial<Product>) => {
-  return api.post(endpoints.products.create, product);
+  return api.post(endpoints.products.create, omit(product, "id"));
+};
+
+export const editProduct = (product: Partial<Product>) => {
+  return api.put(endpoints.products.edit + `/${product.id}`, product);
+};
+
+export const deleteProduct = (id: number) => {
+  return api.delete(endpoints.products.delete + `/${id}`);
 };
