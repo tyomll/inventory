@@ -57,3 +57,4 @@ dist
 
 .env
 yarn.lock
+.vercel
