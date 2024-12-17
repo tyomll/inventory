@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     BASE_URL: process.env.BASE_URL,
   },
   eslint: {
-    ignoreDuringBuilds: true, // Ignore ESLint errors during the build process
+    ignoreDuringBuilds: true,
   },
 };
 

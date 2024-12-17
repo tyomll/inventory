@@ -12,7 +12,7 @@ export function middleware(req: NextRequest) {
   }
 
   if (token && publicRoutes.includes(pathname)) {
-    const dashboardUrl = new URL("/dashboard", req.url);
+    const dashboardUrl = new URL("/dashboard/products", req.url);
     return NextResponse.redirect(dashboardUrl);
   }
 

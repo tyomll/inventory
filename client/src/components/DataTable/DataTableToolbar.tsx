@@ -94,7 +94,6 @@ export function DataTableToolbar<TData>({
                 r.getValue(deletionRowName)
               );
 
-              // filterTableDataByIds(ids, deletionRowName);
               await deleteFunc?.(ids);
               table.resetRowSelection();
             }}

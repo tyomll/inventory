@@ -33,7 +33,7 @@ export class ProductsService {
     if (stockStatus) {
       switch (stockStatus) {
         case "in_stock":
-          filters.stock = { gt: 10 }; // Products with stock > 10
+          filters.stock = { gt: 0 }; // Products with stock > 0
           break;
         case "low_stock":
           filters.stock = { lte: 10, gt: 0 }; // Products with stock <= 10 and > 0
@@ -51,6 +51,7 @@ export class ProductsService {
         where: filters,
         skip,
         take,
+        orderBy: { id: "desc" },
       }),
       this.prisma.product.count({
         where: filters,
