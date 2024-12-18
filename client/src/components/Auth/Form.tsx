@@ -66,7 +66,7 @@ const AuthForm = ({ form }: Props) => {
           description: "You have successfully logged in.",
           variant: "default",
         });
-        router.push("/dashboard");
+        router.push("/dashboard/products");
       } else {
         await register(email, password);
         toast({

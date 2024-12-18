@@ -131,10 +131,7 @@ export function DataTable<TData, TValue>({
         deleteFunc={deleteFunc}
         deletionRowName={deletionRowName}
       />
-      <Button onClick={handleExport} className="self-end">
-        <Download />
-        Export CSV
-      </Button>
+
       <div className="space-y-4 overflow-y-auto rounded-xl bg-sidebar border border-sidebar-border p-5">
         <p className="text-h4 text-black-100">{tableName}</p>
         <Table>
@@ -184,6 +181,10 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+      <Button onClick={handleExport} className="self-end">
+        <Download />
+        Export CSV
+      </Button>
       <DataTablePagination table={table} loadMoreFunc={loadMoreFunc} />
     </div>
   );

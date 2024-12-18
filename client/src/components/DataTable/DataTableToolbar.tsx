@@ -99,7 +99,7 @@ export function DataTableToolbar<TData>({
             }}
           >
             <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
-            Delet ({table.getFilteredSelectedRowModel().rows.length})
+            Delete ({table.getFilteredSelectedRowModel().rows.length})
           </Button>
         ) : (
           <></>
